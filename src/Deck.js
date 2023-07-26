@@ -10,14 +10,14 @@ const BASE_URL = "https://deckofcardsapi.com/api/deck";
 /**
  * Helper - make API call (via Axios) to the given URL and return the data retrieved.
  *
- * Return nothing and log error message to console if error occurs.
+ * Return nothing and pop up alert if error occurs.
 */
 const makeApiCall = async (url) => {
     let result;
     try {
         result = await axios.get(url);
     } catch (err) {
-        console.log(err.message);
+        alert(err.message);
         return;
     }
 
