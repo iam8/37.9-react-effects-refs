@@ -8,6 +8,24 @@ const BASE_URL = "https://deckofcardsapi.com/api/deck";
 
 
 /**
+ * Helper - make API call (via Axios) to the given URL and return the data retrieved.
+ *
+ * Return nothing and log error message to console if error occurs.
+*/
+const makeApiCall = async (url) => {
+    let result;
+    try {
+        result = await axios.get(url);
+    } catch (err) {
+        console.log(err.message);
+        return;
+    }
+
+    return result.data;
+}
+
+
+/**
  * Deck component - display cards drawn from a standard 52-card deck and buttons for drawing cards
  * and reshuffling the deck.
  *
@@ -29,22 +47,18 @@ function Deck({title="Deck of Cards"}) {
     const [drawnCards, setDrawnCards] = useState([]);
 
     // Get a fresh deck
-    useEffect(() => {
+    useEffect(function getNewDeckWhenMounted() {
         console.log("In useEffect - resetting all state");
         setDeck(null);
         setDrawnCards([]);
 
         async function fetchDeck() {
-            let deckResult;
-            try {
-                deckResult = await axios.get(`${BASE_URL}/new/shuffle`);
-            } catch (err) {
-                console.log(err.message);
-                return;
-            }
+            const deckResult = await makeApiCall(`${BASE_URL}/new/shuffle`);
 
-            const {deck_id, remaining} = deckResult.data;
-            setDeck({id: deck_id, remaining});
+            if (deckResult) {
+                const {deck_id, remaining} = deckResult;
+                setDeck({id: deck_id, remaining});
+            }
         }
 
         fetchDeck();
@@ -60,18 +74,14 @@ function Deck({title="Deck of Cards"}) {
             return;
         }
 
-        let cardsRes;
-        try {
-            cardsRes = await axios.get(`${BASE_URL}/${deck.id}/draw/?count=1`);
-        } catch (err) {
-            console.log(err.message);
-            return;
+        const cardsRes = await makeApiCall(`${BASE_URL}/${deck.id}/draw/?count=1`);
+
+        if (cardsRes) {
+            const {deck_id, remaining, cards} = cardsRes;
+
+            setDeck({id: deck_id, remaining});
+            setDrawnCards([...drawnCards, ...cards]);
         }
-
-        const {deck_id, remaining, cards} = cardsRes.data;
-
-        setDeck({id: deck_id, remaining});
-        setDrawnCards([...drawnCards, ...cards]);
     }
 
     // Shuffle current deck and update state
@@ -80,16 +90,12 @@ function Deck({title="Deck of Cards"}) {
         setDeck(null);
         setDrawnCards([]);
 
-        let deckRes;
-        try {
-            deckRes = await axios.get(`${BASE_URL}/${deck.id}/shuffle`);
-        } catch (err) {
-            console.log(err.message);
-            return;
-        }
+        const deckRes = await makeApiCall(`${BASE_URL}/${deck.id}/shuffle`);
 
-        const {deck_id, remaining} = deckRes.data;
-        setDeck({id: deck_id, remaining});
+        if (deckRes) {
+            const {deck_id, remaining} = deckRes;
+            setDeck({id: deck_id, remaining});
+        }
     }
 
     return (
