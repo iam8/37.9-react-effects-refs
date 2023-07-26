@@ -42,13 +42,11 @@ const makeApiCall = async (url) => {
  * - Click (button): shuffle this deck
  */
 function Deck({title="Deck of Cards"}) {
-    console.log("Rendering Deck");
     const [deck, setDeck] = useState(null);
     const [drawnCards, setDrawnCards] = useState([]);
 
     // Get a fresh deck
     useEffect(function getNewDeckWhenMounted() {
-        console.log("In useEffect - resetting all state");
         setDeck(null);
         setDrawnCards([]);
 
@@ -66,7 +64,6 @@ function Deck({title="Deck of Cards"}) {
 
     // Draw card and update state
     const drawCard = async () => {
-        console.log("Cards remaining:", deck.remaining);
 
         // No cards remaining
         if (!deck.remaining) {
@@ -86,7 +83,6 @@ function Deck({title="Deck of Cards"}) {
 
     // Shuffle current deck and update state
     const shuffleDeck = async () => {
-        console.log("Shuffling deck");
         setDeck(null);
         setDrawnCards([]);
 
