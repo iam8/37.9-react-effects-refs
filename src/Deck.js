@@ -30,7 +30,10 @@ function Deck({title="Deck of Cards"}) {
 
     // Get a fresh deck
     useEffect(() => {
-        console.log("In useEffect");
+        console.log("In useEffect - resetting all state");
+        setDeck(null);
+        setDrawnCards([]);
+
         async function fetchDeck() {
             let deckResult;
             try {
@@ -74,6 +77,8 @@ function Deck({title="Deck of Cards"}) {
     // Shuffle current deck and update state
     const shuffleDeck = async () => {
         console.log("Shuffling deck");
+        setDeck(null);
+        setDrawnCards([]);
 
         let deckRes;
         try {
@@ -84,9 +89,7 @@ function Deck({title="Deck of Cards"}) {
         }
 
         const {deck_id, remaining} = deckRes.data;
-
         setDeck({id: deck_id, remaining});
-        setDrawnCards([]);
     }
 
     return (
