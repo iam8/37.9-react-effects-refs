@@ -1,4 +1,5 @@
 import React from "react";
+import "./Card.css";
 
 /**
  * Card component - display an image of a single card.
