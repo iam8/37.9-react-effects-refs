@@ -13,7 +13,7 @@ function Card ({imageUrl}) {
 
     return (
         <div className="Card">
-            <img src={imageUrl} />
+            <img src={imageUrl} alt="playing-card"/>
         </div>
     )
 }
