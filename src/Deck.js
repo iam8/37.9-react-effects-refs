@@ -3,9 +3,9 @@ import axios from "axios";
 import Card from "./Card";
 import "./Deck.css";
 
-// TODO: Error handling for API calls!!!
 
 const BASE_URL = "https://deckofcardsapi.com/api/deck";
+
 
 /**
  * Deck component - display cards drawn from a standard 52-card deck and buttons for drawing cards
@@ -30,6 +30,7 @@ function Deck({title="Deck of Cards"}) {
 
     // Get a fresh deck
     useEffect(() => {
+        console.log("In useEffect");
         async function fetchDeck() {
             let deckResult;
             try {
@@ -70,19 +71,57 @@ function Deck({title="Deck of Cards"}) {
         setDrawnCards([...drawnCards, ...cards]);
     }
 
+    // Shuffle current deck and update state
+    const shuffleDeck = async () => {
+        console.log("Shuffling deck");
+
+        let deckRes;
+        try {
+            deckRes = await axios.get(`${BASE_URL}/${deck.id}/shuffle`);
+        } catch (err) {
+            console.log(err.message);
+            return;
+        }
+
+        const {deck_id, remaining} = deckRes.data;
+
+        setDeck({id: deck_id, remaining});
+        setDrawnCards([]);
+    }
+
     return (
         <div className="Deck">
             <h1>{title}</h1>
 
             <div>
-                {deck ? <></> : <h2 className="Deck-loading">Loading...</h2>}
+                {
+                    deck ?
+                        <></> :
+                        <h2 className="Deck-loading">Loading...</h2>
+                }
             </div>
 
-            {
-            deck ?
-                <button className="Deck-draw-btn" onClick={drawCard}>Draw a card!</button> :
-                <></>
-            }
+            <div>
+                {
+                    deck ?
+                        <button
+                            className="Deck-shuffle-btn"
+                            onClick={shuffleDeck}>Shuffle deck
+                        </button> :
+                        <></>
+                }
+            </div>
+
+            <div>
+                {
+                    deck ?
+                        <button
+                            className="Deck-draw-btn"
+                            onClick={drawCard}>Draw a card!
+                        </button> :
+                        <></>
+                }
+            </div>
 
             <div className="Deck-cards">
                 {
