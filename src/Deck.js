@@ -20,8 +20,8 @@ const BASE_URL = "https://deckofcardsapi.com/api/deck";
  *      - Each card is represented by an object holding its info:
  *          {code, image, images, value, suit}
  * Events:
- * - Click (button to draw new card): draw a new card from this deck
- * - Click (button to reshuffle deck): shuffle this deck
+ * - Click (button): draw a new card from this deck
+ * - Click (button): shuffle this deck
  */
 function Deck({title="Deck of Cards"}) {
     console.log("Rendering Deck");
