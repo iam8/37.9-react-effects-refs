@@ -66,7 +66,7 @@ function Deck({title="Deck of Cards"}) {
     const drawCard = async () => {
 
         // No cards remaining
-        if (!deck.remaining) {
+        if (deck.remaining === 0) {
             alert("Error: no cards remaining!");
             return;
         }
@@ -77,7 +77,7 @@ function Deck({title="Deck of Cards"}) {
             const {deck_id, remaining, cards} = cardsRes;
 
             setDeck({id: deck_id, remaining});
-            setDrawnCards([...drawnCards, ...cards]);
+            setDrawnCards((drawn) => [...drawn, ...cards]);
         }
     }
 
@@ -97,13 +97,15 @@ function Deck({title="Deck of Cards"}) {
     return (
         <div className="Deck">
             <h1>{title}</h1>
+            {deck && <h2>Deck ID: {deck.id}</h2>}
 
             <div>
                 {
                     <button
                         disabled={!deck}
                         className="Deck-shuffle-btn"
-                        onClick={shuffleDeck}>Shuffle deck
+                        onClick={shuffleDeck}>
+                        Shuffle deck
                     </button>
                 }
             </div>
@@ -113,7 +115,8 @@ function Deck({title="Deck of Cards"}) {
                     <button
                         disabled={!deck}
                         className="Deck-draw-btn"
-                        onClick={drawCard}>Draw a card!
+                        onClick={drawCard}>
+                        Draw a card!
                     </button>
                 }
             </div>
@@ -121,7 +124,8 @@ function Deck({title="Deck of Cards"}) {
             <div>
                 {
                     !deck &&
-                        <h2 className="Deck-loading">Loading...</h2>
+                        <h2 className="Deck-loading">
+                        Loading...</h2>
                 }
             </div>
 
