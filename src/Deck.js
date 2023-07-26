@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from "react";
 import axios from "axios";
 import Card from "./Card";
+import "./Deck.css";
 
 // TODO: Error handling for API calls!!!
 
@@ -74,10 +75,14 @@ function Deck({title="Deck of Cards"}) {
             <h1>{title}</h1>
 
             <div>
-                {deck ? <h2>Deck: {deck.id}</h2> : <h2>Loading...</h2>}
+                {deck ? <></> : <h2 className="Deck-loading">Loading...</h2>}
             </div>
 
-            <button className="Deck-draw-btn" onClick={drawCard}>Draw a card!</button>
+            {
+            deck ?
+                <button className="Deck-draw-btn" onClick={drawCard}>Draw a card!</button> :
+                <></>
+            }
 
             <div className="Deck-cards">
                 {
