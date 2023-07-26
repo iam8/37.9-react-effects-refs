@@ -98,31 +98,29 @@ function Deck({title="Deck of Cards"}) {
 
             <div>
                 {
-                    deck ?
-                        <></> :
+                    !deck &&
                         <h2 className="Deck-loading">Loading...</h2>
                 }
             </div>
 
             <div>
                 {
-                    deck ?
+                    deck &&
                         <button
+                            disabled={true}
                             className="Deck-shuffle-btn"
                             onClick={shuffleDeck}>Shuffle deck
-                        </button> :
-                        <></>
+                        </button>
                 }
             </div>
 
             <div>
                 {
-                    deck ?
+                    deck &&
                         <button
                             className="Deck-draw-btn"
                             onClick={drawCard}>Draw a card!
-                        </button> :
-                        <></>
+                        </button>
                 }
             </div>
 
