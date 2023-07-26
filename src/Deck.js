@@ -2,6 +2,8 @@ import React, {useState, useEffect} from "react";
 import axios from "axios";
 import Card from "./Card";
 
+// TODO: Error handling for API calls!!!
+
 
 /**
  * Deck component - display cards drawn from a standard 52-card deck and buttons for drawing cards
@@ -11,8 +13,7 @@ import Card from "./Card";
  * - title (string): custom title for this deck
  *
  * State:
- * - deck (object): holds info about this deck.
- *      - Deck state fields: {deck_id, shuffled, remaining}
+ * - deck (object): holds info about this deck - {deck_id, shuffled, remaining}
  * - drawnCards (array): an array holding all cards currently drawn from the deck.
  *      - Each card is represented by an object holding its info:
  *          {code, image, images, value, suit}
@@ -26,30 +27,38 @@ function Deck({title="Deck of Cards"}) {
 
     const baseUrl = "https://deckofcardsapi.com/api/deck";
 
-    // console.log("Before useEffect call");
-
     // Get a fresh deck from API
     useEffect(() => {
-        // console.log("In useEffect()");
         async function fetchDeck() {
-            // console.log("Inside fetchDeck() - beginning");
             const deckResult = await axios.get(`${baseUrl}/new/shuffle`);
-            const {deck_id, remaining, shuffled} = deckResult.data;
-            setDeck({deck_id, remaining, shuffled});
-            // console.log("End of fetchDeck()");
+            const {deck_id, remaining} = deckResult.data;
+            setDeck({deck_id, remaining});
         }
 
-        // console.log("Before call to fetchDeck()");
         fetchDeck();
-        // console.log("After call to fetchDeck()");
     }, []);
 
-    // console.log("After useEffect() call");
+    // Draw card and update state
+    const drawCard = async () => {
+        const cardsRes = await axios.get(`${baseUrl}/${deck.deck_id}/draw/?count=1`);
+        const {deck_id, remaining, cards} = cardsRes.data;
+        setDeck({deck_id, remaining});
+        setDrawnCards([...drawnCards, ...cards]);
+    }
+
     return (
         <div className="Deck">
             <h1>{title}</h1>
             <div>
-                {deck ? <h2>Deck ID: {deck.deck_id}</h2> : <h2>Loading...</h2>}
+                {deck ? <h2>Deck: {deck.deck_id}</h2> : <h2>Loading...</h2>}
+            </div>
+            <button className="Deck-draw-btn" onClick={drawCard}>Draw a card!</button>
+            <div className="Deck-cards">
+                {
+                    drawnCards.map((card) => {
+                        <Card />
+                    })
+                }
             </div>
         </div>
     )
