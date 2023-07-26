@@ -13,7 +13,7 @@ import Card from "./Card";
  * - title (string): custom title for this deck
  *
  * State:
- * - deck (object): holds info about this deck - {deck_id, shuffled, remaining}
+ * - deck (object): holds info about this deck - {id, remaining}
  * - drawnCards (array): an array holding all cards currently drawn from the deck.
  *      - Each card is represented by an object holding its info:
  *          {code, image, images, value, suit}
@@ -32,7 +32,7 @@ function Deck({title="Deck of Cards"}) {
         async function fetchDeck() {
             const deckResult = await axios.get(`${baseUrl}/new/shuffle`);
             const {deck_id, remaining} = deckResult.data;
-            setDeck({deck_id, remaining});
+            setDeck({id: deck_id, remaining});
         }
 
         fetchDeck();
@@ -40,23 +40,26 @@ function Deck({title="Deck of Cards"}) {
 
     // Draw card and update state
     const drawCard = async () => {
-        const cardsRes = await axios.get(`${baseUrl}/${deck.deck_id}/draw/?count=1`);
+        const cardsRes = await axios.get(`${baseUrl}/${deck.id}/draw/?count=1`);
         const {deck_id, remaining, cards} = cardsRes.data;
-        setDeck({deck_id, remaining});
+        setDeck({id: deck_id, remaining});
         setDrawnCards([...drawnCards, ...cards]);
     }
 
     return (
         <div className="Deck">
             <h1>{title}</h1>
+
             <div>
-                {deck ? <h2>Deck: {deck.deck_id}</h2> : <h2>Loading...</h2>}
+                {deck ? <h2>Deck: {deck.id}</h2> : <h2>Loading...</h2>}
             </div>
+
             <button className="Deck-draw-btn" onClick={drawCard}>Draw a card!</button>
+
             <div className="Deck-cards">
                 {
                     drawnCards.map((card) => {
-                        <Card />
+                        return <Card key={card.code} imageUrl={card.image}/>
                     })
                 }
             </div>
