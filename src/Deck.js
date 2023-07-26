@@ -4,6 +4,7 @@ import Card from "./Card";
 
 // TODO: Error handling for API calls!!!
 
+const BASE_URL = "https://deckofcardsapi.com/api/deck";
 
 /**
  * Deck component - display cards drawn from a standard 52-card deck and buttons for drawing cards
@@ -22,19 +23,21 @@ import Card from "./Card";
  * - Click (button to reshuffle deck): shuffle this deck
  */
 function Deck({title="Deck of Cards"}) {
-    console.log("Component rendering");
+    console.log("Rendering Deck");
     const [deck, setDeck] = useState(null);
     const [drawnCards, setDrawnCards] = useState([]);
 
-    const baseUrl = "https://deckofcardsapi.com/api/deck";
-
     // Get a fresh deck
     useEffect(() => {
-        console.log("Inside useEffect");
-        console.log("Previous deck:", deck);
-        console.log("Previous drawn cards:", drawnCards);
         async function fetchDeck() {
-            const deckResult = await axios.get(`${baseUrl}/new/shuffle`);
+            let deckResult;
+            try {
+                deckResult = await axios.get(`${BASE_URL}/new/shuffle`);
+            } catch (err) {
+                console.log(err.message);
+                return;
+            }
+
             const {deck_id, remaining} = deckResult.data;
             setDeck({id: deck_id, remaining});
         }
@@ -44,11 +47,24 @@ function Deck({title="Deck of Cards"}) {
 
     // Draw card and update state
     const drawCard = async () => {
-        const cardsRes = await axios.get(`${baseUrl}/${deck.id}/draw/?count=1`);
+        console.log("Cards remaining:", deck.remaining);
+
+        // No cards remaining
+        if (!deck.remaining) {
+            alert("Error: no cards remaining!");
+            return;
+        }
+
+        let cardsRes;
+        try {
+            cardsRes = await axios.get(`${BASE_URL}/${deck.id}/draw/?count=1`);
+        } catch (err) {
+            console.log(err.message);
+            return;
+        }
+
         const {deck_id, remaining, cards} = cardsRes.data;
-        console.log("Current deck:", deck.id);
-        console.log("Deck ID from click:", deck_id);
-        console.log(remaining);
+
         setDeck({id: deck_id, remaining});
         setDrawnCards([...drawnCards, ...cards]);
     }
@@ -61,11 +77,7 @@ function Deck({title="Deck of Cards"}) {
                 {deck ? <h2>Deck: {deck.id}</h2> : <h2>Loading...</h2>}
             </div>
 
-            {
-            deck && deck.remaining ?
-                <button className="Deck-draw-btn" onClick={drawCard}>Draw a card!</button> :
-                <div>No cards remaining!</div>
-            }
+            <button className="Deck-draw-btn" onClick={drawCard}>Draw a card!</button>
 
             <div className="Deck-cards">
                 {
