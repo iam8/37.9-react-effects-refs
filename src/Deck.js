@@ -47,8 +47,6 @@ function Deck({title="Deck of Cards"}) {
 
     // Get a fresh deck
     useEffect(function getNewDeckWhenMounted() {
-        setDeck(null);
-        setDrawnCards([]);
 
         async function fetchDeck() {
             const deckResult = await makeApiCall(`${BASE_URL}/new/shuffle`);
